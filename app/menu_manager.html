@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المنيو - Sham JB Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-lg">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">🍽️ إدارة المنيو</h1>
+            <a href="/" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 text-sm">↩️ رجوع</a>
+        </div>
+
+        <!-- إضافة قسم -->
+        <div class="bg-white rounded-xl shadow-md p-6 space-y-5 mb-6">
+            <h2 class="text-lg font-bold text-gray-700">🗂️ إضافة قسم جديد</h2>
+            <input type="text" id="newCatName" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-500 outline-none" placeholder="اسم القسم الجديد">
+            <button onclick="addCategory()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition">➕ إضافة</button>
+        </div>
+
+        <!-- تعديل وحذف قسم -->
+        <div class="bg-white rounded-xl shadow-md p-6 space-y-5 mb-6">
+            <h2 class="text-lg font-bold text-gray-700">✏️ تعديل الأقسام</h2>
+            <select id="editCatSelect" onchange="onEditCatChange()" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-orange-500 outline-none">
+                <option value="">▼ اختر القسم...</option>
+            </select>
+            <input type="text" id="editCatName" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-orange-500 outline-none hidden" placeholder="اسم القسم الجديد">
+            <div class="flex gap-2">
+                <button onclick="updateCategory()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition hidden" id="btnSaveCat">💾 حفظ التعديل</button>
+                <button onclick="deleteCategory()" class="flex-1 bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition hidden" id="btnDeleteCat">✕ حذف القسم</button>
+            </div>
+        </div>
+
+        <!-- إدارة المنتجات -->
+        <div class="bg-white rounded-xl shadow-md p-6 space-y-5 mb-6">
+            <h2 class="text-lg font-bold text-gray-700">📝 إدارة المنتجات</h2>
+            <select id="prodCatSelect" onchange="onProdCatChange()" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+                <option value="">▼ اختر القسم...</option>
+            </select>
+            <select id="prodSelect" onchange="onProdChange()" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none hidden">
+                <option value="">▼ اختر المنتج...</option>
+            </select>
+            <div id="prodFields" class="space-y-4 hidden">
+                <input type="text" id="prodName" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="اسم المنتج">
+                <input type="number" id="prodPrice" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="السعر">
+                <div class="flex gap-2">
+                    <button onclick="updateProduct()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">💾 حفظ</button>
+                    <button onclick="deleteProduct()" class="flex-1 bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition">✕ حذف</button>
+                </div>
+            </div>
+            <div id="newProdFields" class="space-y-4 hidden">
+                <div class="border-t border-gray-200 pt-4">
+                    <h3 class="text-md font-bold text-gray-600 mb-2">➕ إضافة منتج جديد</h3>
+                    <input type="text" id="newProdName" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-500 outline-none mb-3" placeholder="اسم المنتج الجديد">
+                    <input type="number" id="newProdPrice" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-500 outline-none" placeholder="السعر">
+                    <button onclick="addProduct()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition mt-3">➕ إضافة منتج</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="hidden fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg text-center z-50"></div>
+    </div>
+
+    <script>
+        let menu = {};
+        let currentEditCat = '';
+        let currentProdCat = '';
+        let currentProdId = null;
+
+        async function loadMenu() {
+            try {
+                const r = await fetch('/api/menu');
+                menu = await r.json();
+                fillCatSelects();
+            } catch(e) { console.error(e); }
+        }
+
+        function fillCatSelects() {
+            const cats = Object.keys(menu);
+            const selects = ['editCatSelect', 'prodCatSelect'];
+            selects.forEach(id => {
+                const sel = document.getElementById(id);
+                const val = sel.value;
+                sel.innerHTML = '<option value="">▼ اختر القسم...</option>';
+                cats.forEach(c => { sel.innerHTML += `<option value="${c}">📂 ${c}</option>`; });
+                if (val && cats.includes(val)) sel.value = val;
+            });
+        }
+
+        function fillProdSelect(cat) {
+            const sel = document.getElementById('prodSelect');
+            const items = menu[cat] || [];
+            sel.innerHTML = '<option value="">▼ اختر المنتج...</option>';
+            items.forEach(p => { sel.innerHTML += `<option value="${p.id}">${p.name} - ${p.price}</option>`; });
+        }
+
+        // ===== أقسام =====
+        function onEditCatChange() {
+            const cat = document.getElementById('editCatSelect').value;
+            if (!cat) {
+                document.getElementById('editCatName').classList.add('hidden');
+                document.getElementById('btnSaveCat').classList.add('hidden');
+                document.getElementById('btnDeleteCat').classList.add('hidden');
+                return;
+            }
+            currentEditCat = cat;
+            document.getElementById('editCatName').classList.remove('hidden');
+            document.getElementById('editCatName').value = cat;
+            document.getElementById('btnSaveCat').classList.remove('hidden');
+            document.getElementById('btnDeleteCat').classList.remove('hidden');
+        }
+
+        async function addCategory() {
+            const n = document.getElementById('newCatName').value.trim();
+            if (!n) return showToast('⚠️ أدخل اسم القسم');
+            await fetch('/api/category', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: n }) });
+            document.getElementById('newCatName').value = '';
+            await loadMenu();
+            showToast('✅ تم إضافة القسم');
+        }
+
+        async function updateCategory() {
+            const oldName = currentEditCat;
+            const newName = document.getElementById('editCatName').value.trim();
+            if (!newName) return showToast('⚠️ أدخل اسم القسم');
+            const res = await fetch('/api/category/' + encodeURIComponent(oldName) + '/rename', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newName }) });
+            const data = await res.json();
+            if (!data.ok) return showToast('❌ ' + (data.error || 'فشل التعديل'));
+            await loadMenu();
+            document.getElementById('editCatSelect').value = '';
+            onEditCatChange();
+            showToast('✅ تم تعديل القسم (مع الحفاظ على منتجاته)');
+        }
+
+        async function deleteCategory() {
+            const cat = currentEditCat;
+            if (!confirm('حذف القسم "' + cat + '" وجميع منتجاته؟')) return;
+            await fetch('/api/category/' + encodeURIComponent(cat), { method: 'DELETE' });
+            await loadMenu();
+            document.getElementById('editCatSelect').value = '';
+            onEditCatChange();
+            showToast('✅ تم حذف القسم');
+        }
+
+        // ===== منتجات =====
+        function onProdCatChange() {
+            const cat = document.getElementById('prodCatSelect').value;
+            document.getElementById('prodSelect').classList.add('hidden');
+            document.getElementById('prodFields').classList.add('hidden');
+            document.getElementById('newProdFields').classList.add('hidden');
+            if (!cat) return;
+            currentProdCat = cat;
+            fillProdSelect(cat);
+            document.getElementById('prodSelect').classList.remove('hidden');
+            document.getElementById('newProdFields').classList.remove('hidden');
+        }
+
+        function onProdChange() {
+            const id = document.getElementById('prodSelect').value;
+            if (!id) {
+                document.getElementById('prodFields').classList.add('hidden');
+                return;
+            }
+            currentProdId = parseInt(id);
+            const items = menu[currentProdCat] || [];
+            const prod = items.find(p => p.id == currentProdId);
+            if (prod) {
+                document.getElementById('prodName').value = prod.name;
+                document.getElementById('prodPrice').value = prod.price;
+                document.getElementById('prodFields').classList.remove('hidden');
+            }
+        }
+
+        async function updateProduct() {
+            if (!currentProdId) return;
+            const n = document.getElementById('prodName').value.trim();
+            const p = parseInt(document.getElementById('prodPrice').value) || 0;
+            if (!n || !p) return showToast('⚠️ املأ جميع الحقول');
+            const res = await fetch('/api/product/' + currentProdId, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: n, price: p })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                await loadMenu();
+                fillProdSelect(currentProdCat);
+                document.getElementById('prodSelect').value = currentProdId;
+                showToast('✅ تم تحديث المنتج');
+            } else {
+                showToast('❌ فشل التحديث');
+            }
+        }
+
+        async function deleteProduct() {
+            if (!currentProdId) return;
+            if (!confirm('حذف هذا المنتج؟')) return;
+            const res = await fetch('/api/product/' + currentProdId, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.ok) {
+                await loadMenu();
+                document.getElementById('prodSelect').value = '';
+                document.getElementById('prodFields').classList.add('hidden');
+                fillProdSelect(currentProdCat);
+                showToast('✅ تم حذف المنتج');
+            } else {
+                showToast('❌ فشل الحذف');
+            }
+        }
+
+        async function addProduct() {
+            const n = document.getElementById('newProdName').value.trim();
+            const p = parseInt(document.getElementById('newProdPrice').value) || 0;
+            if (!n || !p) return showToast('⚠️ املأ جميع الحقول');
+            if (!currentProdCat) return showToast('⚠️ اختر قسماً أولاً');
+            const r = await fetch('/api/menu');
+            const m = await r.json();
+            const maxId = Math.max(...Object.values(m).flat().map(x => x.id || 0), 0);
+            const res = await fetch('/api/product', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ category: currentProdCat, id: maxId + 1, name: n, price: p })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                document.getElementById('newProdName').value = '';
+                document.getElementById('newProdPrice').value = '';
+                await loadMenu();
+                fillProdSelect(currentProdCat);
+                showToast('✅ تم إضافة المنتج');
+            } else {
+                showToast('❌ فشل الإضافة');
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2500);
+        }
+
+        loadMenu();
+    </script>
+</body>
+</html>

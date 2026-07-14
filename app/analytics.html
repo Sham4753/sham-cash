@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الجرد - Sham JB Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-lg">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">📊 الجرد</h1>
+            <div class="flex gap-2">
+                <button onclick="printReport()" class="bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 text-sm">🖨️</button>
+                <a href="/" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 text-sm">↩️ رجوع</a>
+            </div>
+        </div>
+
+        <!-- نوع الجرد -->
+        <div class="bg-white rounded-xl shadow-md p-6 space-y-5 mb-6">
+            <h2 class="text-lg font-bold text-gray-700">📅 نوع الجرد</h2>
+            <select id="periodSelect" onchange="onPeriodChange()" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+                <option value="daily">📅 يومي</option>
+                <option value="monthly">📅 شهري</option>
+                <option value="yearly">📅 سنوي</option>
+                <option value="custom">🔍 تفصيلي</option>
+            </select>
+
+            <!-- خيارات تفصيلية -->
+            <div id="customOptions" class="space-y-4 hidden">
+                <select id="catSelect" onchange="onCatChange()" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <option value="">🗂️ كل الأقسام</option>
+                </select>
+                <select id="prodSelect" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <option value="">📝 كل المنتجات</option>
+                </select>
+                <div class="flex gap-2">
+                    <input type="date" id="dateFrom" class="flex-1 border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <span class="self-center">إلى</span>
+                    <input type="date" id="dateTo" class="flex-1 border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+            </div>
+            <button onclick="loadReport()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">🔄 عرض التقرير</button>
+        </div>
+
+        <!-- النتائج -->
+        <div id="results" class="hidden bg-white rounded-xl shadow-md p-6 space-y-5 mb-6">
+            <h2 class="text-lg font-bold text-gray-700">📊 النتائج</h2>
+            
+            <!-- ملخص مالي -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                    <div class="text-sm text-green-600">💰 المبيعات</div>
+                    <div class="text-xl font-bold text-green-800" id="totalSales">-</div>
+                </div>
+                <div class="bg-red-50 p-3 rounded-lg border border-red-200">
+                    <div class="text-sm text-red-600">📦 المصروفات</div>
+                    <div class="text-xl font-bold text-red-800" id="totalExpenses">-</div>
+                </div>
+                <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <div class="text-sm text-blue-600">💎 صافي الربح</div>
+                    <div class="text-xl font-bold text-blue-800" id="netProfit">-</div>
+                </div>
+                <div class="bg-orange-50 p-3 rounded-lg border border-orange-200">
+                    <div class="text-sm text-orange-600">💳 الديون</div>
+                    <div class="text-xl font-bold text-orange-800" id="totalDebts">-</div>
+                </div>
+            </div>
+
+            <!-- إحصائيات -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="text-sm text-gray-600 mb-2">🧾 عدد الطلبات: <span id="totalOrders" class="font-bold">-</span></div>
+                <div class="text-sm text-gray-600 mb-2">🛍️ سفري: <span id="typeTakeaway" class="font-bold">-</span></div>
+                <div class="text-sm text-gray-600 mb-2">🪑 صالة: <span id="typeDinein" class="font-bold">-</span></div>
+                <div class="text-sm text-gray-600">🛵 ديليفري: <span id="typeDelivery" class="font-bold">-</span></div>
+            </div>
+
+            <!-- المنتجات المباعة -->
+            <div>
+                <h3 class="font-bold text-gray-700 mb-2">🥇 المنتجات المباعة</h3>
+                <div id="productSales" class="space-y-2 max-h-64 overflow-y-auto"></div>
+            </div>
+
+            <!-- زر طباعة -->
+            <button onclick="printReport()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">🖨️ طباعة التقرير</button>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="hidden fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg text-center z-50"></div>
+    </div>
+
+    <script>
+        async function init() {
+            // تحميل الأقسام
+            try {
+                const r = await fetch('/api/analytics/categories');
+                const cats = await r.json();
+                const sel = document.getElementById('catSelect');
+                cats.forEach(c => { sel.innerHTML += `<option value="${c}">📂 ${c}</option>`; });
+            } catch(e) {}
+            // تاريخ اليوم
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateTo').value = today;
+        }
+
+        function onPeriodChange() {
+            const period = document.getElementById('periodSelect').value;
+            const custom = document.getElementById('customOptions');
+            if (period === 'custom') {
+                custom.classList.remove('hidden');
+            } else {
+                custom.classList.add('hidden');
+            }
+        }
+
+        async function onCatChange() {
+            const cat = document.getElementById('catSelect').value;
+            const sel = document.getElementById('prodSelect');
+            sel.innerHTML = '<option value="">📝 كل المنتجات</option>';
+            if (!cat) return;
+            try {
+                const r = await fetch('/api/analytics/products?category=' + encodeURIComponent(cat));
+                const prods = await r.json();
+                prods.forEach(p => { sel.innerHTML += `<option value="${p}">${p}</option>`; });
+            } catch(e) {}
+        }
+
+        async function loadReport() {
+            const period = document.getElementById('periodSelect').value;
+            const params = new URLSearchParams({ period });
+            
+            if (period === 'custom') {
+                const cat = document.getElementById('catSelect').value;
+                const prod = document.getElementById('prodSelect').value;
+                const from = document.getElementById('dateFrom').value;
+                const to = document.getElementById('dateTo').value;
+                if (cat) params.append('category', cat);
+                if (prod) params.append('product', prod);
+                if (from) params.append('from', from);
+                if (to) params.append('to', to);
+            }
+
+            try {
+                const r = await fetch('/api/analytics?' + params.toString());
+                const data = await r.json();
+                showResults(data);
+            } catch(e) {
+                showToast('❌ خطأ في التحميل');
+            }
+        }
+
+        function showResults(data) {
+            document.getElementById('results').classList.remove('hidden');
+            document.getElementById('totalSales').textContent = (data.total_sales||0).toLocaleString();
+            document.getElementById('totalExpenses').textContent = (data.total_expenses||0).toLocaleString();
+            document.getElementById('netProfit').textContent = (data.net_profit||0).toLocaleString();
+            document.getElementById('totalDebts').textContent = (data.total_debts||0).toLocaleString();
+            document.getElementById('totalOrders').textContent = data.total_orders || 0;
+            
+            const types = data.types || {};
+            document.getElementById('typeTakeaway').textContent = types['سفري'] || 0;
+            document.getElementById('typeDinein').textContent = types['صالة'] || 0;
+            document.getElementById('typeDelivery').textContent = types['ديليفري'] || 0;
+
+            // المنتجات المباعة
+            const products = data.product_sales || [];
+            products.sort((a, b) => b.quantity - a.quantity);
+            const prodDiv = document.getElementById('productSales');
+            if (products.length === 0) {
+                prodDiv.innerHTML = '<p class="text-gray-500">لا توجد منتجات</p>';
+            } else {
+                prodDiv.innerHTML = products.map(p => {
+                    let datesHtml = '';
+                    if (p.dates && Object.keys(p.dates).length > 0) {
+                        datesHtml = '<div class="text-xs text-gray-400 mr-4 mt-1">' + 
+                            Object.entries(p.dates).map(([d, q]) => `${d}: ${q}`).join(' | ') + 
+                            '</div>';
+                    }
+                    return `<div class="bg-gray-50 p-2 rounded border">
+                        <div class="flex justify-between">
+                            <span class="font-bold">${p.name}</span>
+                            <span>${p.quantity} (${((p.total||0)).toLocaleString()})</span>
+                        </div>
+                        ${datesHtml}
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        function printReport() {
+            const results = document.getElementById('results');
+            if (results.classList.contains('hidden')) {
+                showToast('⚠️ اعرض التقرير أولاً');
+                return;
+            }
+            window.print();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2500);
+        }
+
+        init();
+    </script>
+</body>
+</html>

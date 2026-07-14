@@ -1,0 +1,738 @@
+{
+  "menu": {
+    "شاورما": [
+      {
+        "id": 1,
+        "name": "سندويش شاورما",
+        "price": 5
+      },
+      {
+        "id": 2,
+        "name": "سندويش شاورما دبل",
+        "price": 7
+      },
+      {
+        "id": 3,
+        "name": "سندويش اكسترا",
+        "price": 7
+      },
+      {
+        "id": 4,
+        "name": "وجبة عربي",
+        "price": 10
+      },
+      {
+        "id": 5,
+        "name": "وجبة 250غ",
+        "price": 10
+      },
+      {
+        "id": 6,
+        "name": "وجبة شاورما اكسترا",
+        "price": 15
+      },
+      {
+        "id": 14,
+        "name": "نص كيلو شاورما",
+        "price": 15
+      }
+    ],
+    "غربي": [
+      {
+        "id": 7,
+        "name": "وجبة كرسبي",
+        "price": 10
+      },
+      {
+        "id": 8,
+        "name": "سندويش كرسبي",
+        "price": 5
+      },
+      {
+        "id": 9,
+        "name": "وجبة رنجر",
+        "price": 15
+      },
+      {
+        "id": 10,
+        "name": "سندويش رنجر",
+        "price": 6
+      },
+      {
+        "id": 15,
+        "name": "وجبة مكسيكانو",
+        "price": 10
+      },
+      {
+        "id": 16,
+        "name": "سندويش مكسيكانو",
+        "price": 5
+      },
+      {
+        "id": 17,
+        "name": "وجبة فاهيتا",
+        "price": 15
+      },
+      {
+        "id": 18,
+        "name": "سندويش فاهيتا",
+        "price": 6
+      },
+      {
+        "id": 19,
+        "name": "وجبة سبايسي",
+        "price": 10
+      },
+      {
+        "id": 20,
+        "name": "ساندويش سبايسي",
+        "price": 5
+      },
+      {
+        "id": 21,
+        "name": "وجبة سكالوب",
+        "price": 10
+      },
+      {
+        "id": 22,
+        "name": "ساندويش سكالوب",
+        "price": 5
+      }
+    ],
+    "فروج": [
+      {
+        "id": 23,
+        "name": "فروج مشوي",
+        "price": 15
+      },
+      {
+        "id": 24,
+        "name": "وجبة فروج مشوي",
+        "price": 12
+      },
+      {
+        "id": 25,
+        "name": "وجبة بروستد",
+        "price": 12
+      },
+      {
+        "id": 26,
+        "name": "وجبة دبوس",
+        "price": 10
+      },
+      {
+        "id": 27,
+        "name": "وجبة جناح",
+        "price": 10
+      },
+      {
+        "id": 28,
+        "name": "وجبة كستة",
+        "price": 10
+      }
+    ],
+    "مشروبات": [
+      {
+        "id": 46,
+        "name": "عيران",
+        "price": 1
+      },
+      {
+        "id": 47,
+        "name": "كولا",
+        "price": 1
+      },
+      {
+        "id": 48,
+        "name": "اورانج",
+        "price": 1
+      },
+      {
+        "id": 49,
+        "name": "سبرايت",
+        "price": 1
+      },
+      {
+        "id": 50,
+        "name": "فريدو سبريسو",
+        "price": 2
+      },
+      {
+        "id": 51,
+        "name": "اسبريسو",
+        "price": 2
+      },
+      {
+        "id": 52,
+        "name": "كابتشينو",
+        "price": 2
+      }
+    ],
+    "فتات": [
+      {
+        "id": 29,
+        "name": "فتة شاورما",
+        "price": 10
+      },
+      {
+        "id": 30,
+        "name": "فتة كرسبي",
+        "price": 10
+      },
+      {
+        "id": 31,
+        "name": "فتة فاهيتا",
+        "price": 10
+      },
+      {
+        "id": 32,
+        "name": "فتة مكسيكانو",
+        "price": 10
+      },
+      {
+        "id": 33,
+        "name": "فتة فلافل",
+        "price": 5
+      },
+      {
+        "id": 34,
+        "name": "فتة بروستد",
+        "price": 10
+      }
+    ],
+    "مقبلات": [
+      {
+        "id": 35,
+        "name": "صحن حمص",
+        "price": 5
+      },
+      {
+        "id": 36,
+        "name": "بابا غنوج",
+        "price": 5
+      },
+      {
+        "id": 37,
+        "name": "كولسلو",
+        "price": 2
+      },
+      {
+        "id": 38,
+        "name": "كريم ثوم",
+        "price": 1
+      },
+      {
+        "id": 39,
+        "name": "كريم حار",
+        "price": 1
+      },
+      {
+        "id": 40,
+        "name": "صحن خضار",
+        "price": 3
+      },
+      {
+        "id": 41,
+        "name": "صحن بطاطا",
+        "price": 5
+      },
+      {
+        "id": 42,
+        "name": "خبز",
+        "price": 1
+      },
+      {
+        "id": 43,
+        "name": "يالنجي",
+        "price": 5
+      },
+      {
+        "id": 44,
+        "name": "فتوش",
+        "price": 5
+      },
+      {
+        "id": 45,
+        "name": "حمص بشاورما",
+        "price": 8
+      }
+    ],
+    "فلافل": [
+      {
+        "id": 53,
+        "name": "ساندويش فلافل",
+        "price": 3
+      },
+      {
+        "id": 54,
+        "name": "صحن فلافل",
+        "price": 5
+      },
+      {
+        "id": 55,
+        "name": "فتة فلافل",
+        "price": 5
+      },
+      {
+        "id": 56,
+        "name": "فلافل فرط",
+        "price": 1
+      }
+    ]
+  },
+  "orders": [
+    {
+      "items": [
+        {
+          "name": "سندويش شاورما",
+          "price": 5,
+          "quantity": 1
+        },
+        {
+          "name": "سندويش شاورما دبل",
+          "price": 7,
+          "quantity": 1
+        }
+      ],
+      "total": 12,
+      "type": "ديليفري",
+      "note": "",
+      "customer": "حسان",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-14T12:33:56.624Z",
+      "id": "ORD-0001",
+      "timestamp": "2026-07-14T15:33:56.627784"
+    }
+  ],
+  "shifts": [],
+  "log": [],
+  "settings": {
+    "currency": "EUR",
+    "usd_rate": 1,
+    "eur_rate": 1,
+    "restaurant": {
+      "name": "مطعم شامjp",
+      "phone": "06955155529",
+      "address": "كريت "
+    },
+    "printer": {
+      "paper_width": 80,
+      "font_size": "medium",
+      "copies": 1,
+      "footer_text": "مطعم الشام jp يرحب بكم اهلا وسهلا"
+    },
+    "last_order_date": "2026-07-14"
+  },
+  "tables": {
+    "1": {
+      "status": "open",
+      "items": [],
+      "time": "2026-07-09T22:22:25.494072"
+    }
+  },
+  "order_counter": 1,
+  "restaurant_info": {
+    "name": "SHAMjp",
+    "phone": "6955155529",
+    "address": "كريت"
+  },
+  "users": [
+    {
+      "id": 1783787572,
+      "username": "مجد ابو عمر",
+      "password": "5512",
+      "role": "manager"
+    }
+  ],
+  "screen_lock": {
+    "enabled": true,
+    "timeout": 5
+  },
+  "debts": [
+    {
+      "id": 1783972110,
+      "name": "حسان",
+      "amount": 5,
+      "paid": 0,
+      "note": "",
+      "date": "2026-07-13"
+    }
+  ],
+  "employees": [
+    {
+      "id": 1,
+      "name": "مجد",
+      "salary": 200,
+      "advance": 5,
+      "start_date": "2026-07-14"
+    }
+  ],
+  "orders_archive": [
+    {
+      "type": "سفري",
+      "items": [
+        {
+          "id": 1,
+          "name": "Lkj",
+          "price": 555,
+          "qty": 1,
+          "note": ""
+        }
+      ],
+      "subtotal": 555,
+      "discount": 0,
+      "total": 555,
+      "currency": "SYP",
+      "id": "ORD-0001",
+      "timestamp": "2026-07-08T15:45:15.169393",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "type": "سفري",
+      "items": [
+        {
+          "id": 101,
+          "name": "شاورما دجاج",
+          "price": 25000,
+          "qty": 1,
+          "note": ""
+        },
+        {
+          "id": 108,
+          "name": "شاورما إيطالي",
+          "price": 40000,
+          "qty": 1,
+          "note": ""
+        }
+      ],
+      "subtotal": 65000,
+      "discount": 0,
+      "total": 65000,
+      "currency": "SYP",
+      "id": "ORD-0002",
+      "timestamp": "2026-07-09T23:55:05.847197",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "سندويش كرسبي",
+          "price": 5,
+          "quantity": 1
+        },
+        {
+          "name": "سندويش رنجر",
+          "price": 6,
+          "quantity": 1
+        }
+      ],
+      "total": 11,
+      "type": "سفري",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-11T16:31:08.803Z",
+      "id": "ORD-0003",
+      "timestamp": "2026-07-11T19:31:08.807961",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "سندويش كرسبي",
+          "price": 5,
+          "quantity": 1
+        },
+        {
+          "name": "وجبة كرسبي",
+          "price": 10,
+          "quantity": 1
+        }
+      ],
+      "total": 15,
+      "type": "صالة",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-11T16:31:18.871Z",
+      "id": "ORD-0004",
+      "timestamp": "2026-07-11T19:31:18.875155",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "وجبة رنجر",
+          "price": 15,
+          "quantity": 1
+        },
+        {
+          "name": "سندويش كرسبي",
+          "price": 5,
+          "quantity": 1
+        },
+        {
+          "name": "وجبة كرسبي",
+          "price": 10,
+          "quantity": 1
+        }
+      ],
+      "total": 30,
+      "type": "ديليفري",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-11T16:31:24.855Z",
+      "id": "ORD-0005",
+      "timestamp": "2026-07-11T19:31:24.859307",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "سندويش اكسترا",
+          "price": 7,
+          "quantity": 1
+        }
+      ],
+      "total": 7,
+      "type": "سفري",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-11T20:26:30.149Z",
+      "id": "ORD-0006",
+      "timestamp": "2026-07-11T23:26:30.153380",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "فتة شاورما",
+          "price": 10,
+          "quantity": 1
+        }
+      ],
+      "total": 10,
+      "type": "ديليفري",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-12T17:15:50.298Z",
+      "id": "ORD-0007",
+      "timestamp": "2026-07-12T20:15:50.303833",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "وجبة شاورما اكسترا",
+          "price": 15,
+          "quantity": 1
+        }
+      ],
+      "total": 15,
+      "type": "سفري",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-12T18:42:52.610Z",
+      "id": "ORD-0008",
+      "timestamp": "2026-07-12T21:42:52.614420",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "سندويش شاورما دبل",
+          "price": 7,
+          "quantity": 1
+        },
+        {
+          "name": "سندويش اكسترا",
+          "price": 7,
+          "quantity": 1
+        },
+        {
+          "name": "وجبة عربي",
+          "price": 10,
+          "quantity": 1
+        }
+      ],
+      "total": 24,
+      "type": "سفري",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-13T19:44:33.388Z",
+      "id": "ORD-0009",
+      "timestamp": "2026-07-13T22:44:33.393522",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "وجبة فاهيتا",
+          "price": 15,
+          "quantity": 1
+        },
+        {
+          "name": "وجبة رنجر",
+          "price": 15,
+          "quantity": 1
+        },
+        {
+          "name": "وجبة سبايسي",
+          "price": 10,
+          "quantity": 1
+        }
+      ],
+      "total": 40,
+      "type": "سفري",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-13T19:44:46.524Z",
+      "id": "ORD-0010",
+      "timestamp": "2026-07-13T22:44:46.529364",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "فتة بروستد",
+          "price": 10,
+          "quantity": 1
+        },
+        {
+          "name": "فتة فاهيتا",
+          "price": 10,
+          "quantity": 1
+        },
+        {
+          "name": "فتة فلافل",
+          "price": 5,
+          "quantity": 1
+        }
+      ],
+      "total": 25,
+      "type": "سفري",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-13T19:45:02.386Z",
+      "id": "ORD-0011",
+      "timestamp": "2026-07-13T22:45:02.392962",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "فتة فاهيتا",
+          "price": 10,
+          "quantity": 1
+        }
+      ],
+      "total": 10,
+      "type": "سفري",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-13T19:46:43.752Z",
+      "id": "ORD-0012",
+      "timestamp": "2026-07-13T22:46:43.757092",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "وجبة فاهيتا",
+          "price": 15,
+          "quantity": 1
+        }
+      ],
+      "total": 15,
+      "type": "سفري",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-13T19:53:03.798Z",
+      "id": "ORD-0013",
+      "timestamp": "2026-07-13T22:53:03.801503",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "وجبة كستة",
+          "price": 10,
+          "quantity": 1
+        }
+      ],
+      "total": 10,
+      "type": "سفري",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-13T19:53:09.186Z",
+      "id": "ORD-0014",
+      "timestamp": "2026-07-13T22:53:09.190643",
+      "shift_id": "2026-07-14"
+    },
+    {
+      "items": [
+        {
+          "name": "صحن بطاطا",
+          "price": 5,
+          "quantity": 1
+        }
+      ],
+      "total": 5,
+      "type": "سفري",
+      "note": "",
+      "customer": "",
+      "table": "",
+      "payment": "",
+      "date": "2026-07-13T19:53:16.346Z",
+      "id": "ORD-0015",
+      "timestamp": "2026-07-13T22:53:16.349731",
+      "shift_id": "2026-07-14"
+    }
+  ],
+  "materials": [
+    {
+      "id": 1,
+      "name": "دجاج",
+      "quantity": 25,
+      "unit": "كغ",
+      "price": 5
+    }
+  ],
+  "expenses": [
+    {
+      "material_id": 1,
+      "amount": 5,
+      "date": "2026-07-14T15:37:16.762141",
+      "note": "شراء مادة: دجاج"
+    },
+    {
+      "employee_id": 1,
+      "amount": 5,
+      "date": "2026-07-14T15:38:25.266090",
+      "note": "سلفة موظف: مجد"
+    }
+  ]
+}

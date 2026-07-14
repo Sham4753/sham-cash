@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة الطلبات - Sham JB Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-lg">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">📋 قائمة الطلبات</h1>
+            <a href="/" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 text-sm">↩️ رجوع</a>
+        </div>
+
+        <!-- بحث وفلترة -->
+        <div class="bg-white rounded-xl shadow-md p-6 space-y-5 mb-6">
+            <h2 class="text-lg font-bold text-gray-700">🔍 بحث وفلترة</h2>
+            <input type="text" id="searchBox" oninput="renderOrders()" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="🔍 بحث برقم الطلب، المنتج، أو النوع...">
+            <div class="flex gap-2">
+                <input type="date" id="dateFrom" onchange="renderOrders()" class="flex-1 border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+                <span class="self-center">إلى</span>
+                <input type="date" id="dateTo" onchange="renderOrders()" class="flex-1 border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+            <select id="typeFilter" onchange="renderOrders()" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+                <option value="">🪑 كل الأنواع</option>
+                <option value="سفري">🛍️ سفري</option>
+                <option value="صالة">🪑 صالة</option>
+                <option value="ديليفري">🛵 ديليفري</option>
+            </select>
+        </div>
+
+        <!-- الطلبات -->
+        <div class="bg-white rounded-xl shadow-md p-6 space-y-5">
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-bold text-gray-700">🧾 الطلبات</h2>
+                <button onclick="printOrders()" class="bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 text-sm">🖨️ طباعة</button>
+            </div>
+            <div id="ordersList" class="space-y-3 max-h-96 overflow-y-auto"></div>
+            <div class="border-t border-gray-200 pt-3 space-y-1">
+                <div id="totalAmount" class="text-center font-bold text-green-600 text-lg"></div>
+                <div id="totalCount" class="text-center text-gray-600"></div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="hidden fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg text-center z-50"></div>
+    </div>
+
+    <script>
+        let allOrders = [];
+
+        async function loadOrders() {
+            try {
+                const r = await fetch('/api/orders');
+                allOrders = await r.json();
+                // ترتيب من الأحدث للأقدم
+                allOrders.reverse();
+                renderOrders();
+            } catch(e) { console.error(e); }
+        }
+
+        function renderOrders() {
+            const q = document.getElementById('searchBox').value.toLowerCase();
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+
+            let filtered = allOrders.filter(o => {
+                // فلترة النوع
+                if (typeFilter && o.type !== typeFilter) return false;
+                
+                // فلترة التاريخ
+                const orderDate = (o.date || '').substring(0, 10);
+                if (dateFrom && orderDate < dateFrom) return false;
+                if (dateTo && orderDate > dateTo) return false;
+
+                // فلترة البحث
+                if (q) {
+                    const itemsText = (o.items || []).map(i => i.name).join(' ');
+                    const searchText = `${o.id || ''} ${o.type || ''} ${itemsText}`.toLowerCase();
+                    if (!searchText.includes(q)) return false;
+                }
+                return true;
+            });
+
+            const list = document.getElementById('ordersList');
+            let totalAmount = 0;
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 text-center py-4">لا توجد طلبات</p>';
+            } else {
+                list.innerHTML = filtered.map((o, i) => {
+                    totalAmount += o.total || 0;
+                    const items = (o.items || []).map(item => 
+                        `<div class="text-sm text-gray-600">• ${item.name} ×${item.quantity || 1}</div>`
+                    ).join('');
+                    
+                    const typeColors = {
+                        'سفري': 'text-orange-600 bg-orange-50',
+                        'صالة': 'text-blue-600 bg-blue-50',
+                        'ديليفري': 'text-purple-600 bg-purple-50'
+                    };
+                    const typeClass = typeColors[o.type] || 'text-gray-600 bg-gray-50';
+                    const typeIcons = { 'سفري': '🛍️', 'صالة': '🪑', 'ديليفري': '🛵' };
+                    const typeIcon = typeIcons[o.type] || '🧾';
+
+                    return `
+                    <div class="bg-gray-50 rounded-lg border border-gray-200 p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <span class="font-bold text-lg">#${i + 1}</span>
+                                <span class="${typeClass} px-2 py-1 rounded text-xs font-bold mr-2">${typeIcon} ${o.type}</span>
+                            </div>
+                            <span class="font-bold text-green-600">${(o.total || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="text-xs text-gray-500 mb-2">📅 ${(o.date || '').substring(0, 16)}</div>
+                        ${items}
+                        ${o.note ? `<div class="text-xs text-gray-400 mt-2">📝 ${o.note}</div>` : ''}
+                    </div>`;
+                }).join('');
+            }
+
+            document.getElementById('totalAmount').textContent = 
+                filtered.length > 0 ? `💰 إجمالي الطلبات: ${totalAmount.toLocaleString()}` : '';
+            document.getElementById('totalCount').textContent = 
+                filtered.length > 0 ? `🧾 عدد الطلبات: ${filtered.length}` : '';
+        }
+
+        function printOrders() {
+            window.print();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2500);
+        }
+
+        loadOrders();
+    </script>
+</body>
+</html>

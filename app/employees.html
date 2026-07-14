@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الموظفين - Sham JB Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-lg">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">🧑‍💼 الموظفين</h1>
+            <a href="/" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 text-sm">↩️ رجوع</a>
+        </div>
+
+        <!-- إضافة موظف جديد -->
+        <div class="bg-white rounded-xl shadow-md p-6 space-y-5 mb-6">
+            <h2 class="text-lg font-bold text-gray-700">➕ إضافة موظف جديد</h2>
+            <input type="text" id="newName" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-500 outline-none" placeholder="اسم الموظف">
+            <input type="number" id="newSalary" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-500 outline-none" placeholder="الراتب الشهري">
+            <input type="number" id="newAdvance" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-500 outline-none" placeholder="سلفة (تخصم من الكاشير فوراً)">
+            <button onclick="addEmployee()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition">➕ إضافة (السلفة تخصم فوراً من الكاشير)</button>
+        </div>
+
+        <!-- تعديل وحذف موظف -->
+        <div class="bg-white rounded-xl shadow-md p-6 space-y-5 mb-6">
+            <h2 class="text-lg font-bold text-gray-700">✏️ تعديل موظف</h2>
+            <select id="editSelect" onchange="onEditSelect()" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-orange-500 outline-none">
+                <option value="">▼ اختر الموظف...</option>
+            </select>
+            <div id="editFields" class="space-y-4 hidden">
+                <input type="text" id="editName" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-orange-500 outline-none" placeholder="اسم الموظف">
+                <input type="number" id="editSalary" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-orange-500 outline-none" placeholder="الراتب الشهري">
+                <input type="number" id="editAdvance" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-orange-500 outline-none" placeholder="السلفة">
+                <div class="flex gap-2">
+                    <button onclick="updateEmployee()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">💾 حفظ</button>
+                    <button onclick="deleteEmployee()" class="flex-1 bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition">✕ حذف (ترجع السلفة للكاشير)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- قائمة الموظفين -->
+        <div class="bg-white rounded-xl shadow-md p-6 space-y-5">
+            <h2 class="text-lg font-bold text-gray-700">📋 قائمة الموظفين</h2>
+            <input type="text" id="searchBox" oninput="renderEmployees()" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="🔍 بحث بالاسم أو الراتب...">
+            <div id="employeesList" class="space-y-2"></div>
+            <div class="border-t border-gray-200 pt-3 space-y-1">
+                <div id="totalSalaries" class="text-center font-bold text-gray-700"></div>
+                <div id="totalAdvances" class="text-center font-bold text-red-500"></div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="hidden fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg text-center z-50"></div>
+    </div>
+
+    <script>
+        let employees = [];
+        let currentEditId = null;
+
+        async function loadEmployees() {
+            try {
+                const r = await fetch('/api/employees');
+                employees = await r.json();
+                fillSelects();
+                renderEmployees();
+            } catch(e) { console.error(e); }
+        }
+
+        function fillSelects() {
+            const sel = document.getElementById('editSelect');
+            const val = sel.value;
+            sel.innerHTML = '<option value="">▼ اختر الموظف...</option>';
+            employees.forEach(emp => {
+                sel.innerHTML += `<option value="${emp.id}">${emp.name} - راتب: ${emp.salary} - سلفة: ${emp.advance||0}</option>`;
+            });
+            if (val) sel.value = val;
+        }
+
+        function renderEmployees() {
+            const q = document.getElementById('searchBox').value.toLowerCase();
+            const filtered = employees.filter(e => 
+                e.name.toLowerCase().includes(q) || String(e.salary).includes(q)
+            );
+            const list = document.getElementById('employeesList');
+            let totalSalary = 0, totalAdvance = 0;
+            
+            if (filtered.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 text-center py-4">لا يوجد موظفين</p>';
+            } else {
+                list.innerHTML = filtered.map(emp => {
+                    totalSalary += emp.salary || 0;
+                    totalAdvance += emp.advance || 0;
+                    return `
+                    <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <span class="font-bold">${emp.name}</span>
+                        <div class="text-left">
+                            <div class="text-green-600">راتب: ${(emp.salary||0).toLocaleString()}</div>
+                            <div class="text-red-500">سلف: ${(emp.advance||0).toLocaleString()}</div>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+            document.getElementById('totalSalaries').textContent = 
+                filtered.length > 0 ? `💰 إجمالي الرواتب: ${totalSalary.toLocaleString()}` : '';
+            document.getElementById('totalAdvances').textContent = 
+                filtered.length > 0 ? `💸 إجمالي السلف: ${totalAdvance.toLocaleString()}` : '';
+        }
+
+        // ===== إضافة =====
+        async function addEmployee() {
+            const name = document.getElementById('newName').value.trim();
+            const salary = parseInt(document.getElementById('newSalary').value) || 0;
+            const advance = parseInt(document.getElementById('newAdvance').value) || 0;
+            if (!name || !salary) return showToast('⚠️ املأ الاسم والراتب على الأقل');
+            
+            const res = await fetch('/api/employees', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, salary, advance })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                document.getElementById('newName').value = '';
+                document.getElementById('newSalary').value = '';
+                document.getElementById('newAdvance').value = '';
+                await loadEmployees();
+                showToast(advance > 0 ? '✅ تم الإضافة وخصم السلفة من الكاشير' : '✅ تم الإضافة');
+            } else {
+                showToast('❌ فشل الإضافة');
+            }
+        }
+
+        // ===== تعديل =====
+        function onEditSelect() {
+            const id = parseInt(document.getElementById('editSelect').value);
+            if (!id) {
+                document.getElementById('editFields').classList.add('hidden');
+                return;
+            }
+            currentEditId = id;
+            const emp = employees.find(e => e.id === id);
+            if (emp) {
+                document.getElementById('editName').value = emp.name;
+                document.getElementById('editSalary').value = emp.salary;
+                document.getElementById('editAdvance').value = emp.advance || 0;
+                document.getElementById('editFields').classList.remove('hidden');
+            }
+        }
+
+        async function updateEmployee() {
+            if (!currentEditId) return;
+            const name = document.getElementById('editName').value.trim();
+            const salary = parseInt(document.getElementById('editSalary').value) || 0;
+            const advance = parseInt(document.getElementById('editAdvance').value) || 0;
+            if (!name || !salary) return showToast('⚠️ املأ الاسم والراتب');
+            
+            const res = await fetch('/api/employees/' + currentEditId, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, salary, advance })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                await loadEmployees();
+                document.getElementById('editSelect').value = '';
+                document.getElementById('editFields').classList.add('hidden');
+                currentEditId = null;
+                showToast('✅ تم التحديث');
+            } else {
+                showToast('❌ فشل التحديث');
+            }
+        }
+
+        async function deleteEmployee() {
+            if (!currentEditId) return;
+            if (!confirm('حذف هذا الموظف؟ ستُرجع السلفة للكاشير')) return;
+            
+            const res = await fetch('/api/employees/' + currentEditId, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.ok) {
+                await loadEmployees();
+                document.getElementById('editSelect').value = '';
+                document.getElementById('editFields').classList.add('hidden');
+                currentEditId = null;
+                showToast('✅ تم الحذف ورجعت السلفة للكاشير');
+            } else {
+                showToast('❌ فشل الحذف');
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2500);
+        }
+
+        loadEmployees();
+    </script>
+</body>
+</html>
