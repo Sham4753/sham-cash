@@ -507,6 +507,15 @@ def get_analytics():
             item_sales[name] += i.get('quantity', i.get('qty', 1))
     slow_items = sorted(item_sales.items(), key=lambda x: x[1])[:5]
     
+    # 8. مبيعات الأقسام
+    category_sales = {}
+    for o in orders:
+        for i in o.get('items', []):
+            cat = i.get('category', 'غير مصنف')
+            if cat not in category_sales:
+                category_sales[cat] = 0
+            category_sales[cat] += i.get('quantity', i.get('qty', 1)) * i.get('price', 0)
+
     # 7. أكثر الأصناف مبيعاً
     top_items = sorted(item_sales.items(), key=lambda x: x[1], reverse=True)[:5]
     
@@ -522,7 +531,8 @@ def get_analytics():
         "net_profit": net_profit,
         "total_debts": total_debts,
         "slow_items": slow_items,
-        "top_items": top_items
+        "top_items": top_items,
+        "category_sales": category_sales,
     })
 
 
